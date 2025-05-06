@@ -85,12 +85,15 @@ const ScrollableContent = () => {
         }}
       >
         <div className="h-full w-max relative">
-          <Image
+          <img
             src="/images/capywebbanner2.jpg"
             alt="Capybara Banner"
-            fill
-            style={{ objectFit: "contain" }}
-            priority
+            className="h-full w-auto block object-contain"
+            style={{
+              maxWidth: "none",
+              height: "100%",
+              width: "auto",
+            }}
           />
 
           <div className="absolute top-0 left-0 w-full h-full z-10">
