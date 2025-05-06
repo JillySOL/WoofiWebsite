@@ -13,8 +13,8 @@ const luckiestGuy = Luckiest_Guy({
 });
 
 export const metadata: Metadata = {
-  title: "Capybara Memes",
-  description: "The official landing page for Capybara Memes.",
+  title: "Caby",
+  description: "The official landing page for Caby.",
   icons: {
     icon: [
       { url: '/images/favicon/favicon.ico', sizes: 'any' },

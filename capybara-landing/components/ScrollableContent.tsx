@@ -10,11 +10,11 @@ const SCROLL_AMOUNT_PX = 300;
 const SCROLL_ANIMATION_DURATION_MS = 350; // Estimated duration for smooth scroll
 
 const hotspots = [
-  { label: "Community", top: "66%", left: "8%", href: "/community" },
-  { label: "Documentation", top: "48%", left: "20%", href: "/documentation" },
-  { label: "Tokenomics", top: "53%", left: "78%", href: "/tokenomics" },
-  { label: "CA", top: "27%", left: "60%", href: "/ca" },
-  { label: "FAQ", top: "70%", left: "83%", href: "/faq" },
+  { label: "Community", top: "57.7%", left: "9.7%", href: "/community" },
+  { label: "Documentation", top: "53.9%", left: "22.5%", href: "/documentation" },
+  { label: "Tokenomics", top: "55.8%", left: "78.9%", href: "/tokenomics" },
+  { label: "CA", top: "25.8%", left: "52.5%", href: "/ca" },
+  { label: "FAQ", top: "55.0%", left: "33.7%", href: "/faq" },
 ];
 
 const ScrollableContent = () => {
@@ -108,7 +108,7 @@ const ScrollableContent = () => {
                 }}
               >
                 <Link href={spot.href} legacyBehavior>
-                  <a className="block">
+                  <a className="block p-4">
                     <div className="w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
                     <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20">
                       {spot.label}
