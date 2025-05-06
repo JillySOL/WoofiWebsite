@@ -107,14 +107,38 @@ const ScrollableContent = () => {
                   transform: "translate(-50%, -50%)",
                 }}
               >
-                <Link href={spot.href} legacyBehavior>
-                  <a className="block p-4">
-                    <div className="w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
-                    <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20">
-                      {spot.label}
+                {
+                  spot.label === "CA" ? (
+                    // Custom CA Display
+                    <div className="relative group">
+                      <div className="w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
+                      <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20 pointer-events-none">
+                        <div className="flex flex-col items-center p-2 min-w-[200px]">
+                          <span className="font-semibold mb-1">CONTRACT:</span>
+                          <span className="font-mono text-xs break-all mb-2">37iwfsqgntsafshobtbzqghwsttkwazw3yvzgjwkn6ik</span>
+                          <button
+                            className="text-xs text-black bg-white border border-gray-600 px-2 py-1 rounded hover:bg-gray-200 pointer-events-auto"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText("37iwfsqgntsafshobtbzqghwsttkwazw3yvzgjwkn6ik");
+                              // Consider adding feedback here
+                            }}
+                          >
+                            Copy
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </a>
-                </Link>
+                  ) : (
+                    // Default Link Display for other hotspots
+                    <Link href={spot.href} className="block p-4">
+                      <div className="w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
+                      <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20">
+                        {spot.label}
+                      </div>
+                    </Link>
+                  )
+                }
               </div>
             ))}
           </div>
