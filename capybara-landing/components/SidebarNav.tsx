@@ -25,7 +25,6 @@ export default function SidebarNav() {
       >
         ☰
       </button>
-
       {/* Overlay */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-30 z-40 transition-opacity duration-300 ${
@@ -33,7 +32,6 @@ export default function SidebarNav() {
         }`}
         onClick={() => setOpen(false)}
       />
-
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-full w-[280px] bg-[#111111]/90 border-r-2 border-[#9b6d3f] z-50 transition-transform duration-300 ${
@@ -50,7 +48,7 @@ export default function SidebarNav() {
         <div className="h-full pt-8 px-6 text-white flex flex-col justify-center gap-6 font-luckiest-guy">
           {links.map(({ label, href }) => (
             <React.Fragment key={href}>
-              <Link href={href} onClick={() => setOpen(false)}>
+              <Link href={href} onClick={() => setOpen(false)} legacyBehavior>
                 <span className="block text-xl hover:text-yellow-400 transition">{label.toUpperCase()}</span>
               </Link>
               {label === 'CA' && (

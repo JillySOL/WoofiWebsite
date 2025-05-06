@@ -10,16 +10,30 @@ export default function Home() {
     <main className="m-0 p-0">
       <Header />
       <ScrollableContent />
-
       {/* Social Links - Bottom Left (Corrected) */}
       <div className="fixed bottom-6 left-4 z-50 flex space-x-3">
-        <Link href="https://dexscreener.com/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+        <Link
+          href="https://dexscreener.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:opacity-80 transition-opacity"
+          legacyBehavior>
           <Image src="/images/logos/dex-screener-logo-png_seeklogo-527276-removebg-preview.png" alt="DexScreener" width={40} height={40} />
         </Link>
-        <Link href="https://telegram.org/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+        <Link
+          href="https://telegram.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:opacity-80 transition-opacity"
+          legacyBehavior>
           <Image src="/images/logos/telegram-xxl.png" alt="Telegram" width={40} height={40} />
         </Link>
-        <Link href="https://twitter.com/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+        <Link
+          href="https://twitter.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:opacity-80 transition-opacity"
+          legacyBehavior>
           <Image src="/images/logos/twitter-xxl.png" alt="Twitter" width={40} height={40} />
         </Link>
       </div>
