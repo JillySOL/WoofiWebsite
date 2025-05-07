@@ -111,17 +111,30 @@ const ScrollableContent = () => {
                   spot.label === "CA" ? (
                     // Custom CA Display
                     <div className="relative group">
-                      <div className="w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
-                      <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20 pointer-events-none">
-                        <div className="flex flex-col items-center p-2 min-w-[200px]">
-                          <span className="font-semibold mb-1">CONTRACT:</span>
-                          <span className="font-mono text-xs break-all mb-2">37iwfsqgntsafshobtbzqghwsttkwazw3yvzgjwkn6ik</span>
+                      <div className="pulsing-hotspot w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
+                      <div
+                        className="absolute top-6 left-1/2 -translate-x-1/2 \
+                                   bg-gray-800/70 border border-gray-700/80 text-gray-300 \
+                                   px-3 py-3 rounded-lg text-sm \
+                                   opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20 \
+                                   w-[250px] min-w-max"
+                      >
+                        <div className="flex flex-col items-stretch gap-y-2">
+                          <div className="flex items-center justify-between gap-x-3">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className="w-5 h-5 bg-gray-600 rounded-sm flex-shrink-0"></div>
+                              <span className="font-mono text-xs truncate">37iwfsqgntsafshobtbzqghwsttkwazw3yvzgjwkn6ik</span>
+                            </div>
+                          </div>
                           <button
-                            className="text-xs text-black bg-white border border-gray-600 px-2 py-1 rounded hover:bg-gray-200 pointer-events-auto"
+                            className="text-xs text-white px-2 py-1.5 rounded-md flex items-center justify-center gap-1 \
+                                       transition-colors duration-200 flex-shrink-0 \
+                                       bg-black/50 border border-gray-600 hover:bg-gray-700 \
+                                       pointer-events-auto w-full mt-1"
                             onClick={(e) => {
                               e.stopPropagation();
                               navigator.clipboard.writeText("37iwfsqgntsafshobtbzqghwsttkwazw3yvzgjwkn6ik");
-                              // Consider adding feedback here
+                              // TODO: Add copied state feedback if desired
                             }}
                           >
                             Copy
@@ -132,7 +145,7 @@ const ScrollableContent = () => {
                   ) : (
                     // Default Link Display for other hotspots
                     <Link href={spot.href} className="block p-4">
-                      <div className="w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
+                      <div className="pulsing-hotspot w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
                       <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20">
                         {spot.label}
                       </div>

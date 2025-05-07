@@ -11,7 +11,7 @@ export default function Home() {
       <Header />
       <ScrollableContent />
       {/* Social Links - Bottom Left (Corrected) */}
-      <div className="fixed bottom-6 left-4 z-50 flex space-x-3">
+      <div className="fixed bottom-6 left-4 z-[51] flex space-x-3">
         <Link
           href="https://dexscreener.com/"
           target="_blank"

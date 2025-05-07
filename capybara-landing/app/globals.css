@@ -54,3 +54,39 @@ body {
 .animate-buzz {
   animation: buzz 1.2s infinite;
 }
+
+/* Pulse Animation for Hotspots */
+@keyframes pulse-glow {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4); /* Start slightly smaller */
+    opacity: 0.9; /* Brighter start */
+  }
+  50% {
+    opacity: 0.6; /* Brighter mid-point */
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.5); /* Expand further */
+    opacity: 0;
+  }
+}
+
+.pulsing-hotspot {
+  position: relative; /* For pseudo-element positioning */
+}
+
+.pulsing-hotspot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%; /* Matches the hotspot size */
+  height: 100%; /* Matches the hotspot size */
+  background-color: rgba(255, 255, 255, 0.8); /* Slightly more opaque white */
+  border-radius: 50%; /* Circular glow */
+  filter: blur(4px); /* Slightly more blur for a softer, larger glow */
+  transform-origin: center center; /* Ensure scaling is from the center */
+  opacity: 0; /* Initial state for animation */
+  pointer-events: none; /* So it doesn't interfere with clicks */
+  animation: pulse-glow 1.5s infinite ease-out; /* Faster animation */
+  z-index: -1; /* Behind the main dot content */
+}
