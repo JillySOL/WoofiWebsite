@@ -90,3 +90,15 @@ body {
   animation: pulse-glow 1.5s infinite ease-out; /* Faster animation */
   z-index: -1; /* Behind the main dot content */
 }
+
+.capy-animation {
+  display: block;
+  background: transparent;
+  outline: none;
+  border: none;
+  pointer-events: none;
+  border-radius: 12px;
+}
+.capy-animation.highlighted {
+  box-shadow: 0 0 0 4px white;
+}

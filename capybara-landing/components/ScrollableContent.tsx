@@ -1,27 +1,27 @@
+/*
+UPDATED: dynamically choose scaling to avoid whitespace on widescreens
+*/
+
 "use client";
 
 import { useRef, useEffect, useState } from "react";
 import Image from 'next/image';
 import Link from 'next/link';
+import { overlays } from "./bannerOverlays";
 
 const SCROLL_THRESHOLD_PX = 10;
 const INACTIVITY_TIMEOUT_MS = 1000;
 const SCROLL_AMOUNT_PX = 300;
-const SCROLL_ANIMATION_DURATION_MS = 350; // Estimated duration for smooth scroll
-
-const hotspots = [
-  { label: "Community", top: "57.7%", left: "9.7%", href: "/community" },
-  { label: "Documentation", top: "53.9%", left: "22.5%", href: "/documentation" },
-  { label: "Tokenomics", top: "55.8%", left: "78.9%", href: "/tokenomics" },
-  { label: "CA", top: "25.8%", left: "52.5%", href: "/ca" },
-  { label: "FAQ", top: "55.0%", left: "33.7%", href: "/faq" },
-];
+const SCROLL_ANIMATION_DURATION_MS = 350;
 
 const ScrollableContent = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [showLeftIndicator, setShowLeftIndicator] = useState(false);
   const [showRightIndicator, setShowRightIndicator] = useState(false);
   const inactivityTimer = useRef<NodeJS.Timeout | null>(null);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [fillByWidth, setFillByWidth] = useState(false);
 
   const showArrowsAfterDelay = () => {
     if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
@@ -32,7 +32,7 @@ const ScrollableContent = () => {
       setShowRightIndicator(el.scrollLeft < el.scrollWidth - el.clientWidth - SCROLL_THRESHOLD_PX);
     }, INACTIVITY_TIMEOUT_MS);
   };
-  
+
   const hideArrows = () => {
     if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
     setShowLeftIndicator(false);
@@ -41,120 +41,126 @@ const ScrollableContent = () => {
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    const imgEl = imgRef.current;
+    if (!el || !imgEl) return;
 
-    el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-
-    showArrowsAfterDelay();
-
-    const handleScroll = () => {
-      hideArrows();
+    // Determine whether to scale by height or by width
+    const handleResizeOrLoad = () => {
+      const { naturalWidth, naturalHeight } = imgEl;
+      const heightScale = el.clientHeight / naturalHeight;
+      const widthAtHeightScale = naturalWidth * heightScale;
+      setFillByWidth(widthAtHeightScale < el.clientWidth);
+      // Center initial scroll
+      el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
       showArrowsAfterDelay();
     };
 
+    handleResizeOrLoad();
     el.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResizeOrLoad);
+    imgEl.addEventListener("load", handleResizeOrLoad);
+
     return () => {
       el.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResizeOrLoad);
+      imgEl.removeEventListener("load", handleResizeOrLoad);
       if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
     };
   }, []);
 
+  const handleScroll = () => {
+    hideArrows();
+    showArrowsAfterDelay();
+  };
+
   const startScrolling = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return;
     hideArrows();
-
-    const scrollAmount = direction === 'left' ? -SCROLL_AMOUNT_PX : SCROLL_AMOUNT_PX;
-    scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    
-    setTimeout(() => {
-        showArrowsAfterDelay();
-    }, SCROLL_ANIMATION_DURATION_MS);
+    const delta = direction === 'left' ? -SCROLL_AMOUNT_PX : SCROLL_AMOUNT_PX;
+    scrollRef.current.scrollBy({ left: delta, behavior: 'smooth' });
+    setTimeout(showArrowsAfterDelay, SCROLL_ANIMATION_DURATION_MS);
   };
 
   return (
     <div
-      className="h-screen w-screen overflow-hidden m-0 p-0"
-      style={{ overscrollBehaviorX: "none" }}
+      ref={scrollRef}
+      className="h-screen w-screen overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent relative"
+      style={{ WebkitOverflowScrolling: 'touch', scrollBehavior: 'smooth' }}
     >
+      {/* Desktop hover zones */}
       <div
-        ref={scrollRef}
-        className="h-full w-full overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent"
-        style={{
-          WebkitOverflowScrolling: "touch",
-          scrollBehavior: "smooth",
-        }}
-      >
-        <div className="h-full w-max relative">
-          <img
-            src="/images/capywebbanner2.jpg"
-            alt="Capybara Banner"
-            className="h-full w-auto block object-contain"
-            style={{
-              maxWidth: "none",
-              height: "100%",
-              width: "auto",
-            }}
-          />
+        className="hidden md:block absolute left-0 top-0 h-full w-1/6 z-30 cursor-w-resize"
+        onMouseEnter={() => startScrolling('left')}
+      />
+      <div
+        className="hidden md:block absolute right-0 top-0 h-full w-1/6 z-30 cursor-e-resize"
+        onMouseEnter={() => startScrolling('right')}
+      />
 
-          <div className="absolute top-0 left-0 w-full h-full z-10">
-            {hotspots.map((spot, idx) => (
-              <div
-                key={idx}
-                className="absolute z-10 group"
-                style={{
-                  top: spot.top,
-                  left: spot.left,
-                  transform: "translate(-50%, -50%)",
-                }}
-              >
-                {
-                  spot.label === "CA" ? (
-                    // Custom CA Display
-                    <div className="relative group">
-                      <div className="pulsing-hotspot w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
-                      <div
-                        className="absolute top-6 left-1/2 -translate-x-1/2 \
-                                   bg-gray-800/70 border border-gray-700/80 text-gray-300 \
-                                   px-3 py-3 rounded-lg text-sm \
-                                   opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20 \
-                                   w-[250px] min-w-max"
-                      >
-                        <div className="flex flex-col items-stretch gap-y-2">
-                          <div className="flex items-center justify-between gap-x-3">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <div className="w-5 h-5 bg-gray-600 rounded-sm flex-shrink-0"></div>
-                              <span className="font-mono text-xs truncate">37iwfsqgntsafshobtbzqghwsttkwazw3yvzgjwkn6ik</span>
-                            </div>
-                          </div>
-                          <button
-                            className="text-xs text-white px-2 py-1.5 rounded-md flex items-center justify-center gap-1 \
-                                       transition-colors duration-200 flex-shrink-0 \
-                                       bg-black/50 border border-gray-600 hover:bg-gray-700 \
-                                       pointer-events-auto w-full mt-1"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigator.clipboard.writeText("37iwfsqgntsafshobtbzqghwsttkwazw3yvzgjwkn6ik");
-                              // TODO: Add copied state feedback if desired
-                            }}
-                          >
-                            Copy
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    // Default Link Display for other hotspots
-                    <Link href={spot.href} className="block p-4">
-                      <div className="pulsing-hotspot w-4 h-4 rounded-full bg-white shadow-lg animate-buzz transition-transform group-hover:scale-110 cursor-pointer" />
-                      <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20">
-                        {spot.label}
-                      </div>
-                    </Link>
-                  )
+      <div className="h-full w-max relative">
+        <img
+          ref={imgRef}
+          src="/images/2560x1440.png"
+          alt="Capybara Banner"
+          className="block"
+          aria-hidden="true"
+          style={{
+            width: fillByWidth ? '100vw' : 'auto',
+            height: fillByWidth ? 'auto' : '100vh',
+            objectFit: 'cover',
+            zIndex: 0,
+          }}
+        />
+
+        <div className="absolute top-0 left-0 w-full h-full z-10">
+          {overlays.map((overlay, idx) => (
+            <Link
+              key={idx}
+              href={overlay.href}
+              className="absolute group"
+              style={{ top: overlay.top, left: overlay.left, transform: 'translate(-50%, -50%)', zIndex: 10 }}
+              onMouseEnter={() => setHoveredIdx(idx)}
+              onMouseLeave={() => setHoveredIdx(null)}
+            >
+              {overlay.layers.map((layer, lidx) => {
+                const isHovered = hoveredIdx === idx;
+                const highlightClass = isHovered ? 'highlighted' : '';
+                if (layer.type === 'animation' && layer.format === 'webm') {
+                  return (
+                    <video
+                      key={lidx}
+                      src={layer.src}
+                      width={layer.width}
+                      height={layer.height}
+                      autoPlay={layer.autoplay}
+                      loop={layer.loop}
+                      muted
+                      playsInline
+                      className={`capy-animation ${highlightClass}`}
+                      style={{ zIndex: layer.zIndex }}
+                    />
+                  );
                 }
+                if (layer.type === 'image' && layer.format === 'png') {
+                  return (
+                    <img
+                      key={lidx}
+                      src={layer.src}
+                      width={layer.width}
+                      height={layer.height}
+                      alt={overlay.label}
+                      className={`capy-animation ${highlightClass}`}
+                      style={{ zIndex: layer.zIndex }}
+                    />
+                  );
+                }
+                return null;
+              })}
+              <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20">
+                {overlay.label}
               </div>
-            ))}
-          </div>
+            </Link>
+          ))}
         </div>
       </div>
 
@@ -162,7 +168,7 @@ const ScrollableContent = () => {
         <button
           onClick={() => startScrolling('left')}
           onTouchStart={() => startScrolling('left')}
-          className="fixed left-2 top-1/2 -translate-y-1/2 z-20 transition-transform hover:scale-110 cursor-pointer"
+          className="fixed left-2 top-1/2 -translate-y-1/2 z-40 transition-transform hover:scale-110 cursor-pointer"
         >
           <Image src="/images/ArrowLeft.png" alt="Scroll Left" width={64} height={64} />
         </button>
@@ -172,7 +178,7 @@ const ScrollableContent = () => {
         <button
           onClick={() => startScrolling('right')}
           onTouchStart={() => startScrolling('right')}
-          className="fixed right-2 top-1/2 -translate-y-1/2 z-20 transition-transform hover:scale-110 cursor-pointer"
+          className="fixed right-2 top-1/2 -translate-y-1/2 z-40 transition-transform hover:scale-110 cursor-pointer"
         >
           <Image src="/images/ArrowRight.png" alt="Scroll Right" width={64} height={64} />
         </button>
