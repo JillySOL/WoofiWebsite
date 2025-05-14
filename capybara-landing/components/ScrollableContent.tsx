@@ -1,5 +1,5 @@
 /*
-UPDATED: dynamically choose scaling to avoid whitespace on widescreens
+UPDATED: Always fit by width on portrait/mobile, preserve desktop logic intact
 */
 
 "use client";
@@ -29,7 +29,9 @@ const ScrollableContent = () => {
       const el = scrollRef.current;
       if (!el) return;
       setShowLeftIndicator(el.scrollLeft > SCROLL_THRESHOLD_PX);
-      setShowRightIndicator(el.scrollLeft < el.scrollWidth - el.clientWidth - SCROLL_THRESHOLD_PX);
+      setShowRightIndicator(
+        el.scrollLeft < el.scrollWidth - el.clientWidth - SCROLL_THRESHOLD_PX
+      );
     }, INACTIVITY_TIMEOUT_MS);
   };
 
@@ -44,17 +46,24 @@ const ScrollableContent = () => {
     const imgEl = imgRef.current;
     if (!el || !imgEl) return;
 
-    // Determine whether to scale by height or by width
     const handleResizeOrLoad = () => {
-      const { naturalWidth, naturalHeight } = imgEl;
-      const heightScale = el.clientHeight / naturalHeight;
-      const widthAtHeightScale = naturalWidth * heightScale;
-      setFillByWidth(widthAtHeightScale < el.clientWidth);
-      // Center initial scroll
+      // Portrait/mobile: always fit by width to show entire image zoomed out
+      const isPortrait = el.clientHeight > el.clientWidth;
+      if (isPortrait) {
+        setFillByWidth(true);
+      } else {
+        // Desktop: determine best fit to avoid whitespace
+        const { naturalWidth, naturalHeight } = imgEl;
+        const heightScale = el.clientHeight / naturalHeight;
+        const widthAtHeightScale = naturalWidth * heightScale;
+        setFillByWidth(widthAtHeightScale < el.clientWidth);
+      }
+      // Center horizontally
       el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
       showArrowsAfterDelay();
     };
 
+    // Initial and event-triggered layout recalcs
     handleResizeOrLoad();
     el.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResizeOrLoad);
@@ -84,14 +93,14 @@ const ScrollableContent = () => {
   return (
     <div
       ref={scrollRef}
-      className="h-screen w-screen overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent"
+      className="relative h-screen w-screen overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent"
       style={{
         touchAction: 'pan-x pinch-zoom',
         WebkitOverflowScrolling: 'auto',
         scrollBehavior: 'smooth',
       }}
     >
-      {/* Desktop hover zones */}
+      {/* Desktop hover scroll zones */}
       <div
         className="hidden md:block absolute left-0 top-0 h-full w-1/6 z-30 cursor-w-resize"
         onMouseEnter={() => startScrolling('left')}
@@ -136,8 +145,8 @@ const ScrollableContent = () => {
                       src={layer.src}
                       width={layer.width}
                       height={layer.height}
-                      autoPlay={layer.autoplay}
-                      loop={layer.loop}
+                      autoPlay
+                      loop
                       muted
                       playsInline
                       className={`capy-animation ${highlightClass}`}
