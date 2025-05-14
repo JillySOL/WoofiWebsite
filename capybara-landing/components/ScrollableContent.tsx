@@ -7,7 +7,7 @@ UPDATED: Always fit by width on portrait/mobile, preserve desktop logic intact
 import { useRef, useEffect, useState } from "react";
 import Image from 'next/image';
 import Link from 'next/link';
-import { overlays } from "./bannerOverlays";
+import { overlays, Overlay, OverlayLayer } from "./bannerOverlays";
 import IntroVideoOverlay from "./IntroVideoOverlay";
 
 const SCROLL_THRESHOLD_PX = 10;
@@ -24,7 +24,7 @@ const ScrollableContent = () => {
   const inactivityTimer = useRef<NodeJS.Timeout | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [fillByWidth, setFillByWidth] = useState(false);
-  const typedOverlays: any[] = overlays;
+  const typedOverlays: Overlay[] = overlays;
   const [scrollInterval, setScrollInterval] = useState<number | undefined>(undefined);
 
   const showArrowsAfterDelay = () => {
@@ -65,6 +65,11 @@ const ScrollableContent = () => {
       showArrowsAfterDelay();
     };
 
+    const handleScroll = () => {
+      hideArrows();
+      showArrowsAfterDelay();
+    };
+
     // Initial and event-triggered layout recalcs
     handleResizeOrLoad();
     el.addEventListener("scroll", handleScroll, { passive: true });
@@ -78,11 +83,6 @@ const ScrollableContent = () => {
       if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
     };
   }, []);
-
-  const handleScroll = () => {
-    hideArrows();
-    showArrowsAfterDelay();
-  };
 
   const startScrolling = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return;
@@ -141,12 +141,14 @@ const ScrollableContent = () => {
         />
 
         <div className="h-full w-max relative">
-          <img
+          <Image
             ref={imgRef}
             src="/images/2560x1440.png"
             alt="Capybara Banner"
             className="block"
             aria-hidden="true"
+            width={2560}
+            height={1440}
             style={{
               width: fillByWidth ? '100vw' : 'auto',
               height: fillByWidth ? 'auto' : '100vh',
@@ -165,7 +167,7 @@ const ScrollableContent = () => {
                 onMouseEnter={() => setHoveredIdx(idx)}
                 onMouseLeave={() => setHoveredIdx(null)}
               >
-                {overlay.layers.map((layer: any, lidx: any) => {
+                {overlay.layers.map((layer: OverlayLayer, lidx: number) => {
                   const isHovered = hoveredIdx === idx;
                   const highlightClass = isHovered ? 'highlighted' : '';
                   if (layer.type === 'animation' && layer.format === 'webm') {
@@ -186,7 +188,7 @@ const ScrollableContent = () => {
                   }
                   if (layer.type === 'image' && layer.format === 'png') {
                     return (
-                      <img
+                      <Image
                         key={lidx}
                         src={layer.src}
                         width={layer.width}
