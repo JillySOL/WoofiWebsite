@@ -12,8 +12,31 @@ const luckiestGuy = Luckiest_Guy({
 });
 
 export const metadata: Metadata = {
-  title: "Caby",
-  description: "The official landing page for Caby.",
+  title: "CAPY",
+  description: "The official landing page for CAPY.",
+  openGraph: {
+    title: "CAPY",
+    description: "The official landing page for CAPY.",
+    url: "https://yourdomain.com/",
+    type: "website",
+    images: [
+      {
+        url: "https://pbs.twimg.com/profile_banners/1893067822604881920/1740417427/1500x500",
+        width: 1500,
+        height: 500,
+        alt: "CAPY Social Share Banner"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CAPY",
+    description: "The official landing page for CAPY.",
+    images: [
+      "https://pbs.twimg.com/profile_banners/1893067822604881920/1740417427/1500x500"
+    ],
+    site: "@itsacapy"
+  },
   viewport: {
     width: 'device-width',
     initialScale: 1,

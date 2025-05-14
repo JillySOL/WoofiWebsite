@@ -18,7 +18,7 @@ const Header = () => {
     <header className="fixed top-0 left-0 w-full z-50 px-4 py-2">
       <div className="flex justify-between items-center max-w-6xl mx-auto">
         <div className="flex items-center gap-4">
-          <div className="text-white font-luckiest-guy text-xl md:text-2xl">Caby</div>
+          <div className="text-white font-luckiest-guy text-xl md:text-2xl">CAPY</div>
           {SHOW_CONTRACT_BOX && (
             <div className="bg-gray-800/70 border border-gray-700/80 text-gray-300 px-3 py-2 rounded-lg text-xs flex items-center gap-2">
               <img src="/images/favicon/favicon-32x32.png" alt="CA Logo" className="w-4 h-4 rounded-sm flex-shrink-0" />
