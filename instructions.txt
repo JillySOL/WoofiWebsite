@@ -1,0 +1,36 @@
+const SHOW_CONTRACT_BOX = false; // Set to true to show the contract box after launch
+
+
+This is in header, line 5.
+
+---
+
+# Deployment Instructions
+
+## Push to GitHub
+1. Stage all changes:
+   ```bash
+   git add .
+   ```
+2. Commit your changes:
+   ```bash
+   git commit -m "<your commit message>"
+   ```
+3. Push to GitHub:
+   ```bash
+   git push
+   ```
+
+## Deploy to Firebase
+1. Change directory to the app folder (if not already there):
+   ```bash
+   cd capybara-landing
+   ```
+2. Build the project:
+   ```bash
+   npm run build
+   ```
+3. Deploy to Firebase:
+   ```bash
+   npx firebase deploy
+   ```
