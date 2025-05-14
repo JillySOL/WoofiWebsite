@@ -1,22 +1,4 @@
 export const overlays = [
-  {
-    top: "53.9%",
-    left: "22.5%",
-    label: "Documentation",
-    href: "/documentation",
-    layers: [
-      {
-        type: "animation",
-        format: "webm",
-        src: "/videos/Orange.webm",
-        zIndex: 20,
-        width: 80,
-        height: 80,
-        autoplay: true,
-        loop: true,
-      },
-      // Add more layers (e.g., PNGs) as needed
-    ]
-  },
+  // Documentation/WebM section removed for now
   // Add more overlays as needed
 ]; 
