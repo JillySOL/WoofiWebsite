@@ -84,8 +84,12 @@ const ScrollableContent = () => {
   return (
     <div
       ref={scrollRef}
-      className="h-screen w-screen overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent relative"
-      style={{ WebkitOverflowScrolling: 'touch', scrollBehavior: 'smooth' }}
+      className="h-screen w-screen overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent"
+      style={{
+        touchAction: 'pan-x pinch-zoom',
+        WebkitOverflowScrolling: 'auto',
+        scrollBehavior: 'smooth',
+      }}
     >
       {/* Desktop hover zones */}
       <div

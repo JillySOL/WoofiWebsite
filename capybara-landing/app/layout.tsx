@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Luckiest_Guy } from "next/font/google";
 import CustomCursor from "@/components/CustomCursor";
-import SidebarNav from '@/components/SidebarNav';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,6 +14,12 @@ const luckiestGuy = Luckiest_Guy({
 export const metadata: Metadata = {
   title: "Caby",
   description: "The official landing page for Caby.",
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
   icons: {
     icon: [
       { url: '/images/favicon/favicon.ico', sizes: 'any' },
@@ -38,8 +43,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} ${luckiestGuy.className}`}>
         {children}
-        <SidebarNav />
-        {/* Social Icons Removed From Here */}
         <CustomCursor />
       </body>
     </html>
