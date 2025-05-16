@@ -18,7 +18,7 @@ const SCROLL_INTERVAL_MS = 100;
 
 const ScrollableContent = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<HTMLVideoElement>(null);
   const [showLeftIndicator, setShowLeftIndicator] = useState(false);
   const [showRightIndicator, setShowRightIndicator] = useState(false);
   const inactivityTimer = useRef<NodeJS.Timeout | null>(null);
@@ -52,9 +52,9 @@ const ScrollableContent = () => {
 
     const handleResizeOrLoad = () => {
       // Always use the "best fit" logic, regardless of portrait or landscape:
-      const { naturalWidth, naturalHeight } = imgEl;
-      const heightScale      = el.clientHeight / naturalHeight;
-      const widthAtHeight    = naturalWidth * heightScale;
+      const { videoWidth, videoHeight } = imgEl;
+      const heightScale      = el.clientHeight / videoHeight;
+      const widthAtHeight    = videoWidth * heightScale;
     
       // If widthAtHeight < containerWidth → fill by width, else fill by height
       setFillByWidth(widthAtHeight < el.clientWidth);
@@ -74,12 +74,12 @@ const ScrollableContent = () => {
     handleResizeOrLoad();
     el.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResizeOrLoad);
-    imgEl.addEventListener("load", handleResizeOrLoad);
+    imgEl.addEventListener("loadeddata", handleResizeOrLoad);
 
     return () => {
       el.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResizeOrLoad);
-      imgEl.removeEventListener("load", handleResizeOrLoad);
+      imgEl.removeEventListener("loadeddata", handleResizeOrLoad);
       if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
     };
   }, []);
@@ -141,14 +141,14 @@ const ScrollableContent = () => {
         />
 
         <div className="h-full w-max relative">
-          <Image
+          <video
             ref={imgRef}
-            src="/images/2560x1440.png"
-            alt="Capybara Banner"
+            src="/videos/Capi.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
             className="block"
-            aria-hidden="true"
-            width={2560}
-            height={1440}
             style={{
               width: fillByWidth ? '100vw' : 'auto',
               height: fillByWidth ? 'auto' : '100vh',
