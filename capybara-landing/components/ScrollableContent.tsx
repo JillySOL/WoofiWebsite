@@ -106,10 +106,7 @@ const ScrollableContent = () => {
           overflowX: 'hidden',
           userSelect: 'none',
           touchAction: 'none',
-          cursor: 'default',
-          WebkitUserSelect: 'none',
-          MozUserSelect: 'none',
-          msUserSelect: 'none'
+          cursor: 'default'
         }}
       >
         <div className="h-full w-max relative">

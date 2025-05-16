@@ -6,13 +6,19 @@ export default function IntroVideoOverlay({
   videoSrc = "/videos/LoadingVideop.mp4"
 }: { videoSrc?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [showIntro, setShowIntro] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("introPlayed") !== "true";
-  });
+  const [showIntro, setShowIntro] = useState(false);
   const [closing, setClosing] = useState(false);
   const [percent, setPercent] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hasPlayed = localStorage.getItem("introPlayed") === "true";
+      setShowIntro(!hasPlayed);
+      setIsInitialized(true);
+    }
+  }, []);
 
   const closeIntro = () => {
     setClosing(true);
@@ -40,27 +46,24 @@ export default function IntroVideoOverlay({
     let rafId: number;
     let endTimer: number;
 
-    // updates percent at ~60fps
     const updateProgress = () => {
       if (vid.duration) {
-        setPercent((vid.currentTime / vid.duration) * 100);
+        const newPercent = (vid.currentTime / vid.duration) * 100;
+        setPercent(newPercent);
       }
       if (!vid.paused && !vid.ended) {
         rafId = requestAnimationFrame(updateProgress);
       }
     };
 
-    // hide spinner, start playback & RAF
     const onLoadedData = () => {
       setPercent(0);
       setIsLoading(false);
 
-      // play() returns a promise; when it resolves, playback has started
       vid
         .play()
         .then(() => {
           updateProgress();
-          // schedule auto-close 0.5s before end
           if (vid.duration > 0.5) {
             endTimer = window.setTimeout(
               closeIntro,
@@ -70,8 +73,13 @@ export default function IntroVideoOverlay({
         })
         .catch((err) => {
           console.warn("Autoplay prevented:", err);
-          // if blocked, you could show a "▶" overlay on the video itself
         });
+    };
+
+    const onTimeUpdate = () => {
+      if (vid.duration) {
+        setPercent((vid.currentTime / vid.duration) * 100);
+      }
     };
 
     const onPause = () => cancelAnimationFrame(rafId);
@@ -82,6 +90,7 @@ export default function IntroVideoOverlay({
     };
 
     vid.addEventListener("loadeddata", onLoadedData);
+    vid.addEventListener("timeupdate", onTimeUpdate);
     vid.addEventListener("pause", onPause);
     vid.addEventListener("ended", onEnded);
 
@@ -89,12 +98,15 @@ export default function IntroVideoOverlay({
       cancelAnimationFrame(rafId);
       clearTimeout(endTimer);
       vid.removeEventListener("loadeddata", onLoadedData);
+      vid.removeEventListener("timeupdate", onTimeUpdate);
       vid.removeEventListener("pause", onPause);
       vid.removeEventListener("ended", onEnded);
     };
   }, [showIntro]);
 
-  const shouldShowButton = !showIntro && !closing;
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
     <>
@@ -108,14 +120,11 @@ export default function IntroVideoOverlay({
             ${closing ? "opacity-0" : "opacity-100"}
           `}
         >
-          <div className="relative max-w-[90vw] max-h-[80vh]">
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-100 rounded-2xl">
-                <div className="text-white text-xl font-bold animate-pulse">
-                  Loading...
-                </div>
-              </div>
-            )}
+          <div 
+            className="relative max-w-[90vw] max-h-[80vh]"
+            onClick={(e) => e.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()}
+          >
 
             <video
               ref={videoRef}
@@ -125,13 +134,26 @@ export default function IntroVideoOverlay({
               muted
               playsInline
               className="block rounded-2xl w-full h-auto"
+              onError={(e) => {
+                console.error("Video error:", e);
+                closeIntro();
+              }}
+              onClick={(e) => e.preventDefault()}
             />
 
-            {/* progress bar */}
-            <div className="w-full h-1 mt-2 bg-gray-700 rounded-full overflow-hidden">
+            {/* progress bar - using direct updates */}
+            <div 
+              className="w-full h-1 mt-2 bg-gray-700 rounded-full overflow-hidden pointer-events-none select-none touch-none"
+              role="presentation"
+              aria-hidden="true"
+            >
               <div
-                className="h-full bg-white transition-[width] duration-100 ease-linear"
-                style={{ width: `${percent}%` }}
+                className="h-full bg-white pointer-events-none select-none touch-none"
+                style={{ 
+                  width: `${percent}%`,
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none'
+                }}
               />
             </div>
 
@@ -152,7 +174,7 @@ export default function IntroVideoOverlay({
         </div>
       )}
 
-      {shouldShowButton && (
+      {!showIntro && !closing && (
         <button
           onClick={playIntro}
           className="
