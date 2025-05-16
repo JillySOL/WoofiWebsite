@@ -25,23 +25,37 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden; /* Prevent scrollbars on the body itself */
+  cursor: none !important; /* Force hide cursor everywhere */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  cursor: none;
+  cursor: none !important; /* Force hide cursor */
   position: relative; /* Needed for absolute positioning contexts if any */
 }
 
+/* Hide cursor on all elements */
+* {
+  cursor: none !important;
+}
+
+/* Ensure custom cursor is always on top */
+.custom-cursor-component {
+  pointer-events: none;
+  z-index: 99999 !important;
+}
+
 /* Optional: Hide custom cursor component on touch devices if needed */
-/* You might need more specific targeting depending on interactions */
-/* @media (hover: none) {
+@media (hover: none) {
   .custom-cursor-component { 
     display: none;
   }
-} */
+  * {
+    cursor: auto !important;
+  }
+}
 
 /* Buzz Animation for Interactive Dots */
 @keyframes buzz {

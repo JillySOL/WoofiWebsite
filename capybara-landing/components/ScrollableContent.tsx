@@ -10,39 +10,44 @@ import Link from 'next/link';
 import { overlays, Overlay, OverlayLayer } from "./bannerOverlays";
 import IntroVideoOverlay from "./IntroVideoOverlay";
 
-const SCROLL_THRESHOLD_PX = 10;
-const INACTIVITY_TIMEOUT_MS = 1000;
 const SCROLL_AMOUNT_PX = 300;
 const SCROLL_ANIMATION_DURATION_MS = 350;
-const SCROLL_INTERVAL_MS = 100;
 
 const ScrollableContent = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLVideoElement>(null);
   const [showLeftIndicator, setShowLeftIndicator] = useState(false);
   const [showRightIndicator, setShowRightIndicator] = useState(false);
-  const inactivityTimer = useRef<NodeJS.Timeout | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [fillByWidth, setFillByWidth] = useState(false);
   const typedOverlays: Overlay[] = overlays;
-  const [scrollInterval, setScrollInterval] = useState<number | undefined>(undefined);
 
-  const showArrowsAfterDelay = () => {
-    if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-    inactivityTimer.current = setTimeout(() => {
-      const el = scrollRef.current;
-      if (!el) return;
-      setShowLeftIndicator(el.scrollLeft > SCROLL_THRESHOLD_PX);
-      setShowRightIndicator(
-        el.scrollLeft < el.scrollWidth - el.clientWidth - SCROLL_THRESHOLD_PX
-      );
-    }, INACTIVITY_TIMEOUT_MS);
-  };
+  const updateScrollIndicators = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    
+    const containerWidth = el.clientWidth;
+    const contentWidth = el.scrollWidth;
+    const widthRatio = contentWidth / containerWidth;
+    
+    // Only show indicators if content is more than 20% wider than container
+    if (widthRatio > 1.2) {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      const currentScroll = el.scrollLeft;
+      const scrollThreshold = maxScroll / 4; // 25% threshold for position detection
 
-  const hideArrows = () => {
-    if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-    setShowLeftIndicator(false);
-    setShowRightIndicator(false);
+      // Determine position
+      const isLeft = currentScroll < scrollThreshold;
+      const isRight = currentScroll > (maxScroll - scrollThreshold);
+      const isCenter = !isLeft && !isRight;
+
+      // Show appropriate buttons based on position
+      setShowLeftIndicator(isCenter || isRight);
+      setShowRightIndicator(isCenter || isLeft);
+    } else {
+      setShowLeftIndicator(false);
+      setShowRightIndicator(false);
+    }
   };
 
   useEffect(() => {
@@ -51,95 +56,62 @@ const ScrollableContent = () => {
     if (!el || !imgEl) return;
 
     const handleResizeOrLoad = () => {
-      // Always use the "best fit" logic, regardless of portrait or landscape:
       const { videoWidth, videoHeight } = imgEl;
-      const heightScale      = el.clientHeight / videoHeight;
-      const widthAtHeight    = videoWidth * heightScale;
+      const heightScale = el.clientHeight / videoHeight;
+      const widthAtHeight = videoWidth * heightScale;
     
-      // If widthAtHeight < containerWidth → fill by width, else fill by height
       setFillByWidth(widthAtHeight < el.clientWidth);
-    
-      // Center horizontally
       el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-    
-      showArrowsAfterDelay();
+      updateScrollIndicators();
     };
 
-    const handleScroll = () => {
-      hideArrows();
-      showArrowsAfterDelay();
-    };
-
-    // Initial and event-triggered layout recalcs
     handleResizeOrLoad();
-    el.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResizeOrLoad);
     imgEl.addEventListener("loadeddata", handleResizeOrLoad);
 
     return () => {
-      el.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResizeOrLoad);
       imgEl.removeEventListener("loadeddata", handleResizeOrLoad);
-      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
     };
   }, []);
 
   const startScrolling = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return;
-    hideArrows();
-    const delta = direction === 'left' ? -SCROLL_AMOUNT_PX : SCROLL_AMOUNT_PX;
-    scrollRef.current.scrollBy({ left: delta, behavior: 'smooth' });
-    setTimeout(showArrowsAfterDelay, SCROLL_ANIMATION_DURATION_MS);
-  };
+    const el = scrollRef.current;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    const currentScroll = el.scrollLeft;
+    const scrollThreshold = maxScroll / 4;
 
-  // start auto‐scrolling left or right
-  const onZoneEnter = (direction: 'left'|'right') => {
-    if (scrollInterval) window.clearInterval(scrollInterval);
-    const id = window.setInterval(() => {
-      if (!scrollRef.current) return;
-      scrollRef.current.scrollBy({ left: direction === 'left' ? -SCROLL_AMOUNT_PX : SCROLL_AMOUNT_PX, behavior: 'smooth' });
-    }, SCROLL_INTERVAL_MS);
-    setScrollInterval(id);
-  };
-
-  // stop auto‐scrolling
-  const onZoneLeave = () => {
-    if (scrollInterval) {
-      window.clearInterval(scrollInterval);
-      setScrollInterval(undefined);
+    let targetScroll;
+    if (direction === 'left') {
+      // If we're on the right, go to center. If we're in center, go to left
+      targetScroll = currentScroll > (maxScroll - scrollThreshold) ? maxScroll / 2 : 0;
+    } else {
+      // If we're on the left, go to center. If we're in center, go to right
+      targetScroll = currentScroll < scrollThreshold ? maxScroll / 2 : maxScroll;
     }
-  };
 
-  useEffect(() => {
-    return () => {
-      if (scrollInterval) window.clearInterval(scrollInterval);
-    };
-  }, [scrollInterval]);
+    el.scrollTo({ left: targetScroll, behavior: 'smooth' });
+    setTimeout(updateScrollIndicators, SCROLL_ANIMATION_DURATION_MS);
+  };
 
   return (
     <>
       <IntroVideoOverlay videoSrc="/videos/LoadingVideop.mp4" />
       <div
         ref={scrollRef}
-        className="relative h-screen w-screen overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent"
+        className="relative h-screen w-screen overflow-hidden scrollbar-none"
         style={{
-          touchAction: 'pan-x pinch-zoom',
-          WebkitOverflowScrolling: 'auto',
           scrollBehavior: 'smooth',
+          overflowX: 'hidden',
+          userSelect: 'none',
+          touchAction: 'none',
+          cursor: 'default',
+          WebkitUserSelect: 'none',
+          MozUserSelect: 'none',
+          msUserSelect: 'none'
         }}
       >
-        {/* Desktop hover scroll zones */}
-        <div
-          className="hidden md:block absolute left-0 top-0 h-full w-1/6 z-30 cursor-w-resize"
-          onMouseEnter={() => onZoneEnter('left')}
-          onMouseLeave={onZoneLeave}
-        />
-        <div
-          className="hidden md:block absolute right-0 top-0 h-full w-1/6 z-30 cursor-e-resize"
-          onMouseEnter={() => onZoneEnter('right')}
-          onMouseLeave={onZoneLeave}
-        />
-
         <div className="h-full w-max relative">
           <video
             ref={imgRef}
@@ -212,7 +184,6 @@ const ScrollableContent = () => {
         {showLeftIndicator && (
           <button
             onClick={() => startScrolling('left')}
-            onTouchStart={() => startScrolling('left')}
             className="fixed left-2 top-1/2 -translate-y-1/2 z-40 transition-transform hover:scale-110 cursor-pointer"
           >
             <Image src="/images/ArrowLeft.png" alt="Scroll Left" width={64} height={64} />
@@ -222,7 +193,6 @@ const ScrollableContent = () => {
         {showRightIndicator && (
           <button
             onClick={() => startScrolling('right')}
-            onTouchStart={() => startScrolling('right')}
             className="fixed right-2 top-1/2 -translate-y-1/2 z-40 transition-transform hover:scale-110 cursor-pointer"
           >
             <Image src="/images/ArrowRight.png" alt="Scroll Right" width={64} height={64} />

@@ -63,7 +63,7 @@ const CustomCursor = () => {
 
   return (
     <div
-      className="fixed pointer-events-none z-[9999] hidden md:block custom-cursor-component" // High z-index, hide on small screens
+      className="fixed pointer-events-none z-[9999] custom-cursor-component" // Removed hidden md:block
       style={{ ...cursorStyle, ...pointerStyle }} // Merge styles
     />
   )
