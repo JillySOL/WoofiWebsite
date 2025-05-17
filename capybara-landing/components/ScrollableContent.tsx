@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { overlays, Overlay, OverlayLayer } from "./bannerOverlays";
 import IntroVideoOverlay from "./IntroVideoOverlay";
 
-const SCROLL_AMOUNT_PX = 300;
+//const SCROLL_AMOUNT_PX = 300;
 const SCROLL_ANIMATION_DURATION_MS = 350;
 
 const ScrollableContent = () => {
