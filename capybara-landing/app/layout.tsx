@@ -12,6 +12,7 @@ const luckiestGuy = Luckiest_Guy({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://itsacapy.com"),
   title: "Capy: The Chillest Memecoin on Solana",
   description: "Dripped in top tier design and backed by a wild community, Capy is the token you didn't know you needed. Join the capyverse.",
   openGraph: {
@@ -37,12 +38,6 @@ export const metadata: Metadata = {
     ],
     site: "@itsacapy"
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
   icons: {
     icon: [
       { url: '/images/favicon/favicon.ico', sizes: 'any' },
@@ -55,6 +50,13 @@ export const metadata: Metadata = {
       { rel: 'icon', url: '/images/favicon/android-chrome-512x512.png', sizes: '512x512' },
     ],
   },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({

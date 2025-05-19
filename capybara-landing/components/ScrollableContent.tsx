@@ -4,7 +4,7 @@ UPDATED: Always fit by width on portrait/mobile, preserve desktop logic intact
 
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import Image from 'next/image';
 import Link from 'next/link';
 import { overlays, Overlay, OverlayLayer } from "./bannerOverlays";
@@ -123,13 +123,23 @@ const ScrollableContent = () => {
     scrollRef.current.style.cursor = 'grabbing';
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
     if (scrollRef.current) {
       scrollRef.current.style.cursor = canPan ? 'grab' : 'default';
     }
-  };
+  }, [canPan]);
 
+  // For window event listener, use MouseEvent type
+  const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !scrollRef.current || !canPan) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  }, [isDragging, canPan, startX, scrollLeft]);
+
+  // ... keep handleMouseMove for React events ...
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !scrollRef.current || !canPan) return;
     e.preventDefault();
@@ -158,12 +168,12 @@ const ScrollableContent = () => {
 
   useEffect(() => {
     window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('mousemove', handleMouseMove as any);
+    window.addEventListener('mousemove', handleGlobalMouseMove);
     return () => {
       window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('mousemove', handleMouseMove as any);
+      window.removeEventListener('mousemove', handleGlobalMouseMove);
     };
-  }, [isDragging, startX, scrollLeft, canPan]);
+  }, [handleMouseUp, handleGlobalMouseMove]);
 
   return (
     <>
