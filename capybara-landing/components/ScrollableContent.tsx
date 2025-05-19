@@ -140,13 +140,13 @@ const ScrollableContent = () => {
   }, [isDragging, canPan, startX, scrollLeft]);
 
   // ... keep handleMouseMove for React events ...
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollRef.current || !canPan) return;
-    e.preventDefault();
-    const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    scrollRef.current.scrollLeft = scrollLeft - walk;
-  };
+  //const handleMouseMove = (e: React.MouseEvent) => {
+  //  if (!isDragging || !scrollRef.current || !canPan) return;
+  //  e.preventDefault();
+  //  const x = e.pageX - scrollRef.current.offsetLeft;
+  //  const walk = (x - startX) * 2;
+  //  scrollRef.current.scrollLeft = scrollLeft - walk;
+  //};
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!scrollRef.current || !canPan) return;
