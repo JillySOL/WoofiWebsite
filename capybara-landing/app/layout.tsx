@@ -12,28 +12,28 @@ const luckiestGuy = Luckiest_Guy({
 });
 
 export const metadata: Metadata = {
-  title: "CAPY",
-  description: "The official landing page for CAPY.",
+  title: "Capy: The Chillest Memecoin on Solana",
+  description: "Dripped in top tier design and backed by a wild community, Capy is the token you didn't know you needed. Join the capyverse.",
   openGraph: {
-    title: "CAPY",
-    description: "The official landing page for CAPY.",
-    url: "https://yourdomain.com/",
+    title: "Capy: The Chillest Memecoin on Solana",
+    description: "Dripped in top tier design and backed by a wild community, Capy is the token you didn't know you needed. Join the capyverse.",
+    url: "https://itsacapy.com/",
     type: "website",
     images: [
       {
-        url: "https://pbs.twimg.com/profile_banners/1893067822604881920/1740417427/1500x500",
-        width: 1500,
-        height: 500,
-        alt: "CAPY Social Share Banner"
+        url: "/images/banner.JPG",
+        width: 1200,
+        height: 630,
+        alt: "Capy Social Share Banner"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "CAPY",
-    description: "The official landing page for CAPY.",
+    title: "Capy: The Chillest Memecoin on Solana",
+    description: "Dripped in top tier design and backed by a wild community, Capy is the token you didn't know you needed. Join the capyverse.",
     images: [
-      "https://pbs.twimg.com/profile_banners/1893067822604881920/1740417427/1500x500"
+      "/images/banner.JPG"
     ],
     site: "@itsacapy"
   },
