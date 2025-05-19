@@ -5,6 +5,6 @@ export const CONTRACT_ADDRESS_DISPLAY = 'G2Ab...pump';
 
 export const SOCIAL_LINKS = {
   twitter: 'https://x.com/itsacapy',
-  telegram: 'https://t.me/+4N9xTl5xM3RjM2Mx',
+  telegram: 'https://t.me/itsacapyportal',
   dexscreener: 'https://dexscreener.com/',
 }; 
