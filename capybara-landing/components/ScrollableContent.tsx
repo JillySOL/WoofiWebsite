@@ -20,6 +20,10 @@ const ScrollableContent = () => {
   const [showRightIndicator, setShowRightIndicator] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [fillByWidth, setFillByWidth] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [canPan, setCanPan] = useState(false);
   const typedOverlays: Overlay[] = overlays;
 
   const updateScrollIndicators = () => {
@@ -55,23 +59,38 @@ const ScrollableContent = () => {
     const imgEl = imgRef.current;
     if (!el || !imgEl) return;
 
+    const handleScroll = () => {
+      updateScrollIndicators();
+    };
+
     const handleResizeOrLoad = () => {
       const { videoWidth, videoHeight } = imgEl;
       const heightScale = el.clientHeight / videoHeight;
       const widthAtHeight = videoWidth * heightScale;
-    
       setFillByWidth(widthAtHeight < el.clientWidth);
       el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
       updateScrollIndicators();
+      // Update canPan
+      const containerWidth = el.clientWidth;
+      const contentWidth = el.scrollWidth;
+      const widthRatio = contentWidth / containerWidth;
+      setCanPan(widthRatio > 1.2);
     };
 
     handleResizeOrLoad();
     window.addEventListener("resize", handleResizeOrLoad);
     imgEl.addEventListener("loadeddata", handleResizeOrLoad);
+    el.addEventListener("scroll", handleScroll, { passive: true });
+
+    // If video is already loaded (e.g. on fast reload), center immediately
+    if (imgEl.readyState >= 2) {
+      handleResizeOrLoad();
+    }
 
     return () => {
       window.removeEventListener("resize", handleResizeOrLoad);
       imgEl.removeEventListener("loadeddata", handleResizeOrLoad);
+      el.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -95,6 +114,57 @@ const ScrollableContent = () => {
     setTimeout(updateScrollIndicators, SCROLL_ANIMATION_DURATION_MS);
   };
 
+  // Drag/Swipe handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current || !canPan) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+    scrollRef.current.style.cursor = 'grabbing';
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (scrollRef.current) {
+      scrollRef.current.style.cursor = canPan ? 'grab' : 'default';
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current || !canPan) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!scrollRef.current || !canPan) return;
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !scrollRef.current || !canPan) return;
+    const x = e.touches[0].pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mousemove', handleMouseMove as any);
+    return () => {
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMouseMove as any);
+    };
+  }, [isDragging, startX, scrollLeft, canPan]);
+
   return (
     <>
       <IntroVideoOverlay videoSrc="/videos/LoadingVideop.mp4" />
@@ -105,9 +175,13 @@ const ScrollableContent = () => {
           scrollBehavior: 'smooth',
           overflowX: 'hidden',
           userSelect: 'none',
-          touchAction: 'none',
-          cursor: 'default'
+          touchAction: canPan ? 'none' : 'auto',
+          cursor: canPan ? (isDragging ? 'grabbing' : 'grab') : 'default',
         }}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <div className="h-full w-max relative">
           <video
