@@ -10,22 +10,12 @@ export default function IntroVideoOverlay({
   const [closing, setClosing] = useState(false);
   const [percent, setPercent] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hasPlayed = localStorage.getItem("introPlayed") === "true";
-      setShowIntro(!hasPlayed);
-      setIsInitialized(true);
-    }
-  }, []);
 
   const closeIntro = () => {
     setClosing(true);
     setTimeout(() => {
       setShowIntro(false);
       setClosing(false);
-      localStorage.setItem("introPlayed", "true");
       setPercent(0);
     }, 500); // match your CSS transition-duration
   };
@@ -48,8 +38,7 @@ export default function IntroVideoOverlay({
 
     const updateProgress = () => {
       if (vid.duration) {
-        const newPercent = (vid.currentTime / vid.duration) * 100;
-        setPercent(newPercent);
+        setPercent((vid.currentTime / vid.duration) * 100);
       }
       if (!vid.paused && !vid.ended) {
         rafId = requestAnimationFrame(updateProgress);
@@ -104,10 +93,6 @@ export default function IntroVideoOverlay({
     };
   }, [showIntro]);
 
-  if (!isInitialized) {
-    return null;
-  }
-
   return (
     <>
       {showIntro && (
@@ -120,12 +105,10 @@ export default function IntroVideoOverlay({
             ${closing ? "opacity-0" : "opacity-100"}
           `}
         >
-          <div 
-            className="relative max-w-[90vw] max-h-[80vh]"
+          <div className="relative max-w-[90vw] max-h-[80vh]"
             onClick={(e) => e.preventDefault()}
             onMouseDown={(e) => e.preventDefault()}
           >
-
             <video
               ref={videoRef}
               src={videoSrc}
