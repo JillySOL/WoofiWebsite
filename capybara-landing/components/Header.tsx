@@ -3,7 +3,7 @@ import { Copy, Check } from 'lucide-react';
 import { CONTRACT_ADDRESS, CONTRACT_ADDRESS_DISPLAY } from '../constants/links';
 import Image from 'next/image';
 
-const SHOW_CONTRACT_BOX = false; // Set to true to show the contract box after launch
+const SHOW_CONTRACT_BOX = true; // Set to true to show the contract box after launch
 
 const Header = () => {
   const [copied, setCopied] = useState(false);
