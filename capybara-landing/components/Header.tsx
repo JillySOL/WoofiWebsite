@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Copy, Check } from 'lucide-react';
-import { CONTRACT_ADDRESS, CONTRACT_ADDRESS_DISPLAY } from '../constants/links';
 import Image from 'next/image';
 
 const SHOW_CONTRACT_BOX = true; // Set to true to show the contract box after launch
@@ -15,24 +13,36 @@ const Header = () => {
     }
   }, [copied]);
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText('D3S1AW1Tj1BbQVCo34D9frJDoD81dU8YRCPhbtUUpump');
+    setCopied(true);
+  };
+
   return (
-    <header className="fixed top-0 left-0 w-full z-50 px-4 py-2">
+    <header className="fixed left-0 w-full z-50 px-4 py-2" style={{ top: '5.5%' }}>
       <div className="flex justify-between items-center max-w-6xl mx-auto">
         <div className="flex items-center gap-4">
-          <div className="text-white font-luckiest-guy text-xl md:text-2xl">CAPY</div>
           {SHOW_CONTRACT_BOX && (
-            <div className="bg-gray-800/70 border border-gray-700/80 text-gray-300 px-3 py-2 rounded-lg text-xs flex items-center gap-2">
-              <Image src="/images/favicon/favicon-32x32.png" alt="CA Logo" width={16} height={16} className="w-4 h-4 rounded-sm flex-shrink-0" />
-              <span className="truncate font-mono">Contract: {CONTRACT_ADDRESS_DISPLAY}</span>
+            <div className="relative">
+              <Image 
+                src="/images/logos/CA BOX.png" 
+                alt="Contract Address Box" 
+                width={160} 
+                height={48} 
+                className="w-auto h-12 object-contain"
+              />
               <button
-                className={`text-xs text-white px-2 py-1 rounded-md flex items-center gap-1 transition-colors duration-200 flex-shrink-0 ${copied ? 'bg-green-500 hover:bg-green-600' : 'bg-black/50 border border-gray-600 hover:bg-gray-700'}`}
-                onClick={() => {
-                  navigator.clipboard.writeText(CONTRACT_ADDRESS);
-                  setCopied(true);
-                }}
+                onClick={handleCopy}
+                className="absolute right-10 top-1/2 -translate-y-1/2 flex-shrink-0 transition-transform hover:scale-105 active:scale-95"
+                style={{ zIndex: 2 }}
               >
-                {copied ? <Check size={14} /> : <Copy size={14} />}
-                {copied ? 'Copied!' : 'Copy'}
+                <Image 
+                  src={copied ? "/images/logos/Copied_butt_01.png" : "/images/logos/copy_butt01.png"} 
+                  alt={copied ? "Copied" : "Copy"} 
+                  width={48} 
+                  height={48} 
+                  className="w-12 h-12 object-contain"
+                />
               </button>
             </div>
           )}

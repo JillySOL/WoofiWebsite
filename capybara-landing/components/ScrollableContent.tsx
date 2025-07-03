@@ -177,7 +177,7 @@ const ScrollableContent = () => {
 
   return (
     <>
-      <IntroVideoOverlay videoSrc="/videos/LoadingVideop.mp4" />
+      <IntroVideoOverlay videoSrc="/videos/Woofi.mp4" />
       <div
         ref={scrollRef}
         className="relative h-screen w-screen overflow-hidden scrollbar-none"
@@ -196,7 +196,7 @@ const ScrollableContent = () => {
         <div className="h-full w-max relative">
           <video
             ref={imgRef}
-            src="/videos/Capi.mp4"
+            src="/videos/Woofi.mp4"
             autoPlay
             loop
             muted

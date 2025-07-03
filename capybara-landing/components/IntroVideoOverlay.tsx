@@ -1,12 +1,18 @@
 // file: components/IntroVideoOverlay.tsx
 "use client";
 import { useRef, useEffect, useState } from "react";
+import Image from 'next/image';
 
 export default function IntroVideoOverlay({
-  videoSrc = "/videos/LoadingVideop.mp4"
-}: { videoSrc?: string }) {
+  showIntro,
+  setShowIntro,
+  videoSrc = "/videos/Woofi.mp4"
+}: {
+  showIntro: boolean,
+  setShowIntro: (show: boolean) => void,
+  videoSrc?: string
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [showIntro, setShowIntro] = useState(false);
   const [closing, setClosing] = useState(false);
   const [percent, setPercent] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,16 +24,6 @@ export default function IntroVideoOverlay({
       setClosing(false);
       setPercent(0);
     }, 500); // match your CSS transition-duration
-  };
-
-  const playIntro = () => {
-    setPercent(0);
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-    }
-    setShowIntro(true);
-    setClosing(false);
-    setIsLoading(true);
   };
 
   useEffect(() => {
@@ -93,6 +89,8 @@ export default function IntroVideoOverlay({
     };
   }, [showIntro]);
 
+  if (!showIntro && !closing) return null;
+
   return (
     <>
       {showIntro && (
@@ -116,6 +114,7 @@ export default function IntroVideoOverlay({
               autoPlay
               muted
               playsInline
+              controls
               className="block rounded-2xl w-full h-auto"
               onError={(e) => {
                 console.error("Video error:", e);
@@ -155,19 +154,6 @@ export default function IntroVideoOverlay({
             )}
           </div>
         </div>
-      )}
-
-      {!showIntro && !closing && (
-        <button
-          onClick={playIntro}
-          className="
-            fixed bottom-6 right-6 z-40 px-5 py-3 rounded-full
-            bg-black text-white font-bold shadow-lg
-            hover:scale-105 transition-all text-lg
-          "
-        >
-          ▶ Play Video
-        </button>
       )}
     </>
   );

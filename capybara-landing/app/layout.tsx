@@ -1,15 +1,6 @@
 import type { Metadata } from "next";
-import { Inter, Luckiest_Guy } from "next/font/google";
 import CustomCursor from "@/components/CustomCursor";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
-
-const luckiestGuy = Luckiest_Guy({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-luckiest-guy',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://itsacapy.com"),
@@ -66,7 +57,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${luckiestGuy.className}`}>
+      <body>
         {children}
         <CustomCursor />
       </body>
