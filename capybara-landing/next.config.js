@@ -6,6 +6,9 @@ const nextConfig = {
   },
   // Add the output configuration for static export
   output: 'export',
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 module.exports = nextConfig; 

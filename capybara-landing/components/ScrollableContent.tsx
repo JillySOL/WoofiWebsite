@@ -8,7 +8,6 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import Image from 'next/image';
 import Link from 'next/link';
 import { overlays, Overlay, OverlayLayer } from "./bannerOverlays";
-import IntroVideoOverlay from "./IntroVideoOverlay";
 import BackgroundHotspots from "./BackgroundHotspots";
 
 //const SCROLL_AMOUNT_PX = 300;

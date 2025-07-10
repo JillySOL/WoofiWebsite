@@ -1,7 +1,6 @@
 // file: components/IntroVideoOverlay.tsx
 "use client";
 import { useRef, useEffect, useState } from "react";
-import Image from 'next/image';
 import ThemedModal from './ThemedModal';
 import WoofiModalContent1 from './WoofiModalContent1';
 import WoofiModalContent2 from './WoofiModalContent2';
