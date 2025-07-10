@@ -2,6 +2,15 @@ import React, { useState } from "react";
 import ThemedModal from "./ThemedModal";
 import WoofiModalContent1 from "./WoofiModalContent1";
 import WoofiModalContent2 from "./WoofiModalContent2";
+import { CONTRACT_ADDRESS, CONTRACT_ADDRESS_DISPLAY } from '../constants/links';
+
+const copyIcon = '/images/logos/COPY ICON.png';
+const roadmapImg = '/roadmap.jpg';
+const dexscreenerImg = '/images/logos/dex-screener-logo-png_seeklogo-527276-removebg-preview.png';
+
+const DEXSCREENER_URL = 'https://dexscreener.com/solana/db1xsa6zp7fsmrqjdeqrwxj3brcwuzqyv91nxd3xwqfw';
+const TWITTER_URL = 'https://x.com/wooficoin';
+const TELEGRAM_URL = 'https://t.me/+RdMGm9WTD5kyOTUx';
 
 const hotspots = [
   {
@@ -15,24 +24,60 @@ const hotspots = [
     top: '55%', left: '51%', width: '14.2%', height: '21%', label: 'Save the Dogs',
     modal: {
       title: 'Save the Dogs',
-      body: <WoofiModalContent2 />, imageSrc: '/images/logos/CA BOX.png'
+      body: (
+        <div style={{ fontFamily: 'Arial, sans-serif', textAlign: 'center', maxWidth: '2000px', margin: '0 auto' }}>
+          Woofi is pioneering the next generation of socially conscious memes, we're saving the world's puppies through Solana.<br /><br />
+          <span style={{ fontFamily: '"Gamja Flower", cursive', fontSize: '1.2em' }}>Merging web 2 and web 3</span>
+          <div style={{ margin: '2.5rem 0 0 0' }}>
+            <img src={roadmapImg} alt="Woofi Roadmap" style={{ maxWidth: '100%', width: '1920px', borderRadius: 12 }} />
+          </div>
+        </div>
+      ),
+      imageSrc: undefined // Remove CA Box image
     }
   },
   {
-    top: '27%', left: '52%', width: '11%', height: '15%', label: 'Coming Soon',
+    top: '70%', left: '38.5%', width: '10%', height: '14%', label: 'Roadmap', // Now the roadmap modal
     modal: {
-      title: 'Coming Soon',
-      body: <div style={{ fontFamily: 'Arial, sans-serif' }}>Coming soon</div>
+      title: '', // No title for Coming Soon
+      body: (
+        <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '1.5rem', color: '#222', textAlign: 'center', padding: '2.5rem 0', fontWeight: 600, letterSpacing: '0.01em' }}>
+          <span style={{ fontSize: '2.2rem', marginRight: 10 }}>🚧</span> More features and updates are coming soon!
+        </div>
+      ),
+      imageSrc: undefined
     }
   },
   {
-    top: '70%', left: '38.5%', width: '10%', height: '14%', label: 'DexScreener',
+    top: '27%', left: '52%', width: '11%', height: '15%', label: 'DexScreener',
     modal: {
       title: 'DexScreener',
-      body: <a href="https://dexscreener.com" target="_blank" rel="noopener noreferrer">Open DexScreener</a>
+      body: (
+        <DexScreenerModal />
+      ),
+      imageSrc: undefined // Remove CA Box image
     }
   },
 ];
+
+function DexScreenerModal() {
+  const handleCopy = () => {
+    navigator.clipboard.writeText(CONTRACT_ADDRESS);
+  };
+  return (
+    <div style={{ textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16, marginTop: 12 }}>
+        <span style={{ fontFamily: 'monospace', fontSize: '1em', background: '#f4f4f4', borderRadius: 6, padding: '2px 8px' }}>{CONTRACT_ADDRESS_DISPLAY}</span>
+        <button onClick={handleCopy} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }} aria-label="Copy contract address">
+          <img src={copyIcon} alt="Copy" style={{ width: 28, height: 28, verticalAlign: 'middle' }} />
+        </button>
+      </div>
+      <a href={DEXSCREENER_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12 }}>
+        <img src={dexscreenerImg} alt="DexScreener" style={{ width: 180, height: 'auto', borderRadius: 10 }} />
+      </a>
+    </div>
+  );
+}
 
 const BackgroundHotspots: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -91,6 +136,7 @@ const BackgroundHotspots: React.FC = () => {
           title={hotspots[openIndex].modal.title}
           body={hotspots[openIndex].modal.body}
           imageSrc={hotspots[openIndex].modal.imageSrc}
+          maxWidth={openIndex === 1 ? '2000px' : undefined}
         />
       )}
     </>
