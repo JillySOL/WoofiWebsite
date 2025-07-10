@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { overlays, Overlay, OverlayLayer } from "./bannerOverlays";
 import IntroVideoOverlay from "./IntroVideoOverlay";
+import BackgroundHotspots from "./BackgroundHotspots";
 
 //const SCROLL_AMOUNT_PX = 300;
 const SCROLL_ANIMATION_DURATION_MS = 350;
@@ -177,7 +178,6 @@ const ScrollableContent = () => {
 
   return (
     <>
-      <IntroVideoOverlay videoSrc="/videos/Woofi.mp4" />
       <div
         ref={scrollRef}
         className="relative h-screen w-screen overflow-hidden scrollbar-none"
@@ -209,7 +209,8 @@ const ScrollableContent = () => {
               zIndex: 0,
             }}
           />
-
+          {/* Hotspots over the video */}
+          <BackgroundHotspots />
           <div className="absolute top-0 left-0 w-full h-full z-10">
             {typedOverlays.map((overlay, idx) => (
               <Link

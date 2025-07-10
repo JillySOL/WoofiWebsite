@@ -4,41 +4,38 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://itsacapy.com"),
-  title: "Capy: The Chillest Memecoin on Solana",
-  description: "Dripped in top tier design and backed by a wild community, Capy is the token you didn't know you needed. Join the capyverse.",
+  title: "Woofi: The Genius Dog",
+  description: "Woof with us, save the dogs! Discover the puppy who's changing the way we help and make money at the same time.",
   openGraph: {
-    title: "Capy: The Chillest Memecoin on Solana",
-    description: "Dripped in top tier design and backed by a wild community, Capy is the token you didn't know you needed. Join the capyverse.",
+    title: "Woofi: The Genius Dog",
+    description: "Woof with us, save the dogs! Discover the puppy who's changing the way we help and make money at the same time.",
     url: "https://itsacapy.com/",
     type: "website",
     images: [
       {
-        url: "/images/banner.JPG",
+        url: "/images/logos/PIC_Woofi.png",
         width: 1200,
         height: 630,
-        alt: "Capy Social Share Banner"
+        alt: "Woofi Social Share Banner"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Capy: The Chillest Memecoin on Solana",
-    description: "Dripped in top tier design and backed by a wild community, Capy is the token you didn't know you needed. Join the capyverse.",
+    title: "Woofi: The Genius Dog",
+    description: "Woof with us, save the dogs! Discover the puppy who's changing the way we help and make money at the same time.",
     images: [
-      "/images/banner.JPG"
-    ],
-    site: "@itsacapy"
+      "/images/logos/PIC_Woofi.png"
+    ]
   },
   icons: {
     icon: [
-      { url: '/images/favicon/favicon.ico', sizes: 'any' },
-      { url: '/images/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/images/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/favicon/FAV-Icon.png', sizes: 'any' }
     ],
-    apple: '/images/favicon/apple-touch-icon.png',
+    apple: '/images/favicon/FAV-Icon.png',
     other: [
-      { rel: 'icon', url: '/images/favicon/android-chrome-192x192.png', sizes: '192x192' }, 
-      { rel: 'icon', url: '/images/favicon/android-chrome-512x512.png', sizes: '512x512' },
+      { rel: 'icon', url: '/images/favicon/FAV-Icon.png', sizes: '192x192' }, 
+      { rel: 'icon', url: '/images/favicon/FAV-Icon.png', sizes: '512x512' },
     ],
   },
 };
@@ -57,7 +54,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet" />
+      </head>
+      <body style={{ fontFamily: 'Arial, sans-serif' }}>
         {children}
         <CustomCursor />
       </body>

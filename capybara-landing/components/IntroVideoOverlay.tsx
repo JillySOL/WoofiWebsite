@@ -2,6 +2,9 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
 import Image from 'next/image';
+import ThemedModal from './ThemedModal';
+import WoofiModalContent1 from './WoofiModalContent1';
+import WoofiModalContent2 from './WoofiModalContent2';
 
 export default function IntroVideoOverlay({
   showIntro,
@@ -16,6 +19,8 @@ export default function IntroVideoOverlay({
   const [closing, setClosing] = useState(false);
   const [percent, setPercent] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const handleClose = () => setOpenIndex(null);
 
   const closeIntro = () => {
     setClosing(true);
@@ -115,14 +120,49 @@ export default function IntroVideoOverlay({
               muted
               playsInline
               controls
-              className="block rounded-2xl w-full h-auto"
+              className="block rounded-2xl w-full h-auto z-10"
               onError={(e) => {
                 console.error("Video error:", e);
                 closeIntro();
               }}
               onClick={(e) => e.preventDefault()}
             />
-
+            {/* No hotspots or hotspot CSS here */}
+            {/* Modals for each hotspot */}
+            {openIndex === 0 && (
+              <ThemedModal
+                open={true}
+                onClose={handleClose}
+                title="Meet Woofi"
+                body={<WoofiModalContent1 />}
+                imageSrc="/images/logos/PIC_Woofi.png"
+              />
+            )}
+            {openIndex === 1 && (
+              <ThemedModal
+                open={true}
+                onClose={handleClose}
+                title="Save the Dogs"
+                body={<WoofiModalContent2 />}
+                imageSrc="/images/logos/CA BOX.png"
+              />
+            )}
+            {openIndex === 2 && (
+              <ThemedModal
+                open={true}
+                onClose={handleClose}
+                title="Coming Soon"
+                body={<div style={{ fontFamily: 'Arial, sans-serif' }}>Coming soon</div>}
+              />
+            )}
+            {openIndex === 3 && (
+              <ThemedModal
+                open={true}
+                onClose={handleClose}
+                title="DexScreener"
+                body={<a href="https://dexscreener.com" target="_blank" rel="noopener noreferrer">Open DexScreener</a>}
+              />
+            )}
             {/* progress bar - using direct updates */}
             <div 
               className="w-full h-1 mt-2 bg-gray-700 rounded-full overflow-hidden pointer-events-none select-none touch-none"
@@ -138,7 +178,6 @@ export default function IntroVideoOverlay({
                 }}
               />
             </div>
-
             {/* skip */}
             {!isLoading && (
               <button
