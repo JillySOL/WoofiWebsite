@@ -14,7 +14,7 @@ const Header = () => {
   }, [copied]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText('D3S1AW1Tj1BbQVCo34D9frJDoD81dU8YRCPhbtUUpump');
+    navigator.clipboard.writeText('5UF9Q7tdkGnZy8MoMrYqe6tcAZJbSaNWMGuUnJajmoon');
     setCopied(true);
   };
 

@@ -297,19 +297,19 @@ const ScrollableContent = () => {
             {showLeftIndicator && (
               <button
                 onClick={() => startScrolling('left')}
-                className="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all duration-200"
+                className="fixed left-0 top-1/2 -translate-y-1/2 z-50 hover:opacity-80 transition-all duration-200"
                 aria-label="Scroll left"
               >
-                <Image src="/images/ArrowLeft.png" alt="Left" width={24} height={24} />
+                <Image src="/images/ArrowLeft.png" alt="Left" width={48} height={48} />
               </button>
             )}
             {showRightIndicator && (
               <button
                 onClick={() => startScrolling('right')}
-                className="fixed right-0 top-1/2 -translate-y-1/2 z-50 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all duration-200"
+                className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hover:opacity-80 transition-all duration-200"
                 aria-label="Scroll right"
               >
-                <Image src="/images/ArrowRight.png" alt="Right" width={24} height={24} />
+                <Image src="/images/ArrowRight.png" alt="Right" width={48} height={48} />
               </button>
             )}
           </>
