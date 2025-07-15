@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ThemedModal from "./ThemedModal";
 import WoofiModalContent1 from "./WoofiModalContent1";
 import WoofiModalContent2 from "./WoofiModalContent2";
 import { CONTRACT_ADDRESS, CONTRACT_ADDRESS_DISPLAY } from '../constants/links';
 
 const copyIcon = '/images/logos/COPY ICON.png';
-const roadmapImg = '/roadmap.jpg';
+const roadmapImg = '/roadmap.PNG';
 const dexscreenerImg = '/images/logos/dex-screener-logo-png_seeklogo-527276-removebg-preview.png';
 
-const DEXSCREENER_URL = 'https://dexscreener.com/solana/db1xsa6zp7fsmrqjdeqrwxj3brcwuzqyv91nxd3xwqfw';
+const DEXSCREENER_URL = 'https://dexscreener.com/solana/5UF9Q7tdkGnZy8MoMrYqe6tcAZJbSaNWMGuUnJajmoon';
 const TWITTER_URL = 'https://x.com/wooficoin';
 const TELEGRAM_URL = 'https://t.me/+RdMGm9WTD5kyOTUx';
 
@@ -29,7 +29,7 @@ const hotspots = [
           Woofi is pioneering the next generation of socially conscious memes, we're saving the world's puppies through Solana.<br /><br />
           <span style={{ fontFamily: '"Gamja Flower", cursive', fontSize: '1.2em' }}>Merging web 2 and web 3</span>
           <div style={{ margin: '2.5rem 0 0 0' }}>
-            <img src={roadmapImg} alt="Woofi Roadmap" style={{ maxWidth: '100%', width: '1920px', borderRadius: 12 }} />
+            <img src={roadmapImg} alt="Woofi Roadmap" style={{ maxWidth: '100%', width: '100%', height: 'auto', borderRadius: 12 }} />
           </div>
         </div>
       ),
@@ -69,7 +69,7 @@ function DexScreenerModal() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16, marginTop: 12 }}>
         <span style={{ fontFamily: 'monospace', fontSize: '1em', background: '#f4f4f4', borderRadius: 6, padding: '2px 8px' }}>{CONTRACT_ADDRESS_DISPLAY}</span>
         <button onClick={handleCopy} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }} aria-label="Copy contract address">
-          <img src={copyIcon} alt="Copy" style={{ width: 28, height: 28, verticalAlign: 'middle' }} />
+          <img src={copyIcon} alt="Copy" style={{ width: 35, height: 35, verticalAlign: 'middle' }} />
         </button>
       </div>
       <a href={DEXSCREENER_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12 }}>
@@ -81,6 +81,17 @@ function DexScreenerModal() {
 
 const BackgroundHotspots: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // Add a small delay to ensure smooth transition after video loads
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
       <style>{`
@@ -88,6 +99,10 @@ const BackgroundHotspots: React.FC = () => {
           0% { opacity: 0.18; box-shadow: 0 0 0 0 rgba(80,80,80,0.10); }
           50% { opacity: 0.38; box-shadow: 0 0 16px 8px rgba(80,80,80,0.13); }
           100% { opacity: 0.18; box-shadow: 0 0 0 0 rgba(80,80,80,0.10); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.8); }
+          to { opacity: 1; transform: scale(1); }
         }
         .bg-hotspot {
           position: absolute;
@@ -102,7 +117,13 @@ const BackgroundHotspots: React.FC = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          animation: pulse 2.5s infinite;
+          opacity: 0;
+          transform: scale(0.8);
+          animation: fadeIn 0.6s ease-out forwards, pulse 2.5s infinite 0.6s;
+        }
+        .bg-hotspot.visible {
+          opacity: 1;
+          transform: scale(1);
         }
         .bg-hotspot:focus,
         .bg-hotspot:hover {
@@ -116,12 +137,13 @@ const BackgroundHotspots: React.FC = () => {
       {hotspots.map((h, i) => (
         <div
           key={i}
-          className="bg-hotspot"
+          className={`bg-hotspot ${isVisible ? 'visible' : ''}`}
           style={{
             top: h.top,
             left: h.left,
             width: h.width,
             height: h.height,
+            animationDelay: `${0.6 + (i * 0.1)}s`, // Stagger the animations
           }}
           tabIndex={0}
           aria-label={h.label}
@@ -136,7 +158,7 @@ const BackgroundHotspots: React.FC = () => {
           title={hotspots[openIndex].modal.title}
           body={hotspots[openIndex].modal.body}
           imageSrc={hotspots[openIndex].modal.imageSrc}
-          maxWidth={openIndex === 1 ? '2000px' : undefined}
+          maxWidth={openIndex === 1 ? '3000px' : undefined}
         />
       )}
     </>

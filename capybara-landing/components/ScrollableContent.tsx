@@ -24,6 +24,8 @@ const ScrollableContent = () => {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [canPan, setCanPan] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoLoading, setVideoLoading] = useState(true);
   const typedOverlays: Overlay[] = overlays;
 
   const updateScrollIndicators = () => {
@@ -77,19 +79,33 @@ const ScrollableContent = () => {
       setCanPan(widthRatio > 1.2);
     };
 
+    const handleVideoLoad = () => {
+      setVideoLoading(false);
+      setVideoLoaded(true);
+      handleResizeOrLoad();
+    };
+
+    const handleVideoError = () => {
+      setVideoLoading(false);
+      setVideoLoaded(true); // Still show content even if video fails
+      handleResizeOrLoad();
+    };
+
     handleResizeOrLoad();
     window.addEventListener("resize", handleResizeOrLoad);
-    imgEl.addEventListener("loadeddata", handleResizeOrLoad);
+    imgEl.addEventListener("loadeddata", handleVideoLoad);
+    imgEl.addEventListener("error", handleVideoError);
     el.addEventListener("scroll", handleScroll, { passive: true });
 
     // If video is already loaded (e.g. on fast reload), center immediately
     if (imgEl.readyState >= 2) {
-      handleResizeOrLoad();
+      handleVideoLoad();
     }
 
     return () => {
       window.removeEventListener("resize", handleResizeOrLoad);
-      imgEl.removeEventListener("loadeddata", handleResizeOrLoad);
+      imgEl.removeEventListener("loadeddata", handleVideoLoad);
+      imgEl.removeEventListener("error", handleVideoError);
       el.removeEventListener("scroll", handleScroll);
     };
   }, []);
@@ -193,6 +209,17 @@ const ScrollableContent = () => {
         onTouchEnd={handleTouchEnd}
       >
         <div className="h-full w-max relative">
+          {/* Loading overlay */}
+          {videoLoading && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+                <div className="text-white text-lg font-semibold">Loading Woofi...</div>
+                <div className="text-white text-sm opacity-75 mt-2">Preparing your experience</div>
+              </div>
+            </div>
+          )}
+          
           <video
             ref={imgRef}
             src="/videos/Woofi.mp4"
@@ -208,8 +235,10 @@ const ScrollableContent = () => {
               zIndex: 0,
             }}
           />
-          {/* Hotspots over the video */}
-          <BackgroundHotspots />
+          
+          {/* Only show hotspots when video is loaded */}
+          {videoLoaded && <BackgroundHotspots />}
+          
           <div className="absolute top-0 left-0 w-full h-full z-10">
             {typedOverlays.map((overlay, idx) => (
               <Link
@@ -261,23 +290,29 @@ const ScrollableContent = () => {
             ))}
           </div>
         </div>
-
-        {showLeftIndicator && (
-          <button
-            onClick={() => startScrolling('left')}
-            className="fixed left-2 top-1/2 -translate-y-1/2 z-40 transition-transform hover:scale-110 cursor-pointer"
-          >
-            <Image src="/images/ArrowLeft.png" alt="Scroll Left" width={64} height={64} />
-          </button>
-        )}
-
-        {showRightIndicator && (
-          <button
-            onClick={() => startScrolling('right')}
-            className="fixed right-2 top-1/2 -translate-y-1/2 z-40 transition-transform hover:scale-110 cursor-pointer"
-          >
-            <Image src="/images/ArrowRight.png" alt="Scroll Right" width={64} height={64} />
-          </button>
+        
+        {/* Scroll indicators - only show when video is loaded */}
+        {videoLoaded && (
+          <>
+            {showLeftIndicator && (
+              <button
+                onClick={() => startScrolling('left')}
+                className="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all duration-200"
+                aria-label="Scroll left"
+              >
+                <Image src="/images/ArrowLeft.png" alt="Left" width={24} height={24} />
+              </button>
+            )}
+            {showRightIndicator && (
+              <button
+                onClick={() => startScrolling('right')}
+                className="fixed right-0 top-1/2 -translate-y-1/2 z-50 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all duration-200"
+                aria-label="Scroll right"
+              >
+                <Image src="/images/ArrowRight.png" alt="Right" width={24} height={24} />
+              </button>
+            )}
+          </>
         )}
       </div>
     </>

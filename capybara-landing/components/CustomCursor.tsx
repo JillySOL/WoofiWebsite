@@ -45,8 +45,8 @@ const CustomCursor = () => {
   const cursorStyle = {
     left: `${position.x}px`,
     top: `${position.y}px`,
-    width: '96px',
-    height: '96px',
+    width: '64px', // Reduced from 96px (33% smaller)
+    height: '64px', // Reduced from 96px (33% smaller)
     backgroundImage: 'url(/images/cursor.png)',
     backgroundSize: 'contain',
     backgroundRepeat: 'no-repeat',
