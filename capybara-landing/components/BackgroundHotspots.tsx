@@ -5,7 +5,7 @@ import WoofiModalContent2 from "./WoofiModalContent2";
 import { CONTRACT_ADDRESS, CONTRACT_ADDRESS_DISPLAY } from '../constants/links';
 
 const copyIcon = '/images/logos/COPY ICON.png';
-const roadmapImg = '/roadmap.PNG';
+const roadmapImg = '/roadmap.png';
 const dexscreenerImg = '/images/logos/dex-screener-logo-png_seeklogo-527276-removebg-preview.png';
 
 const DEXSCREENER_URL = 'https://dexscreener.com/solana/5UF9Q7tdkGnZy8MoMrYqe6tcAZJbSaNWMGuUnJajmoon';
@@ -48,16 +48,16 @@ const hotspots = [
       imageSrc: undefined
     }
   },
-  {
-    top: '27%', left: '52%', width: '11%', height: '15%', label: 'DexScreener',
-    modal: {
-      title: 'DexScreener',
-      body: (
-        <DexScreenerModal />
-      ),
-      imageSrc: undefined // Remove CA Box image
-    }
-  },
+  // {
+  //   top: '27%', left: '52%', width: '11%', height: '15%', label: 'DexScreener',
+  //   modal: {
+  //     title: 'DexScreener',
+  //     body: (
+  //       <DexScreenerModal />
+  //     ),
+  //     imageSrc: undefined // Remove CA Box image
+  //   }
+  // },
 ];
 
 function DexScreenerModal() {
