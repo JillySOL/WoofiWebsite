@@ -8,7 +8,7 @@ import WoofiModalContent2 from './WoofiModalContent2';
 export default function IntroVideoOverlay({
   showIntro,
   setShowIntro,
-  videoSrc = "/videos/Woofi.mp4"
+  videoSrc = "/videos/IMG_3895.MP4"
 }: {
   showIntro: boolean,
   setShowIntro: (show: boolean) => void,
